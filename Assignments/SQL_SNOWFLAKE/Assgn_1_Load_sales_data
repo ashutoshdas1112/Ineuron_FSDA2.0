@@ -1,0 +1,85 @@
+USE DATABASE DEMO_DATABASE;
+CREATE OR REPLACE TABLE AD_SALES_DATA(
+    order_id VARCHAR(30) PRIMARY KEY,  -------QUESTION 1 & 2
+    order_date DATE DEFAULT DATE('2022-10-10'), ------QUESTION 3 (CHANGING THE DATA TYPE)
+    ship_date DATE DEFAULT DATE('2022-10-10'),
+    ship_mode STRING,
+    customer_name VARCHAR(30),
+    segment VARCHAR(30),
+    state STRING,
+    country STRING,
+    market VARCHAR(50),
+    region VARCHAR(20),
+    product_id VARCHAR(30),
+    category VARCHAR(20),
+    sub_category VARCHAR(20),
+    product_name STRING,
+    sales INTEGER,
+    quantity NUMBER(12),
+    discount NUMBER(10,2),
+    profit STRING,
+    shipping_cost STRING,
+    order_priority VARCHAR(15),
+    year NUMBER(4)
+);
+
+SELECT * FROM AD_SALES_DATA;
+
+CREATE OR REPLACE TABLE AD_SALES_DATA_1 CLONE AD_SALES_DATA;
+
+SELECT * FROM AD_SALES_DATA_1;
+
+ALTER TABLE AD_SALES_DATA_1   --------------------QUESTION 4 
+ADD order_extract INT;
+
+UPDATE AD_SALES_DATA_1 
+SET order_extract = REGEXP_SUBSTR(Order_ID, '[^-]+$');
+
+SELECT * FROM AD_SALES_DATA_1;
+-----------------------------------------------------------------
+ALTER TABLE AD_SALES_DATA_1
+ADD order_extract_1 INT;
+UPDATE AD_SALES_DATA_1 
+SET order_extract_1 = SPLIT_PART(Order_ID, '-', -1);
+
+SELECT * FROM AD_SALES_DATA_1;
+-----------------------------------------------------------------
+ALTER TABLE AD_SALES_DATA_1 ----------------------------QUESTION 5
+ADD COLUMN DISCOUNT_FLAG VARCHAR(5);
+
+UPDATE AD_SALES_DATA_1
+SET DISCOUNT_FLAG=(CASE 
+                        WHEN DISCOUNT>0 THEN 'YES'
+                        ELSE
+                            'NO'
+                  END);
+   
+SELECT * FROM AD_SALES_DATA_1;
+
+
+
+ALTER TABLE AD_SALES_DATA_1----------------------QUESTION 6
+ADD COLUMN PROCESS_DAYS INT;
+
+UPDATE AD_SALES_DATA_1
+SET PROCESS_DAYS=DATEDIFF('DAY',ORDER_DATE,SHIP_DATE);
+SELECT * FROM AD_SALES_DATA_1;
+
+
+
+
+ALTER TABLE AD_SALES_DATA_1----------------------------------QUESTION 7
+ADD COLUMN RATING INT;
+
+UPDATE  AD_SALES_DATA_1
+SET RATING=(CASE 
+                WHEN PROCESS_DAYS<=3 THEN 5
+                WHEN PROCESS_DAYS<=6 THEN 4
+                WHEN PROCESS_DAYS<=10 THEN 3
+                ELSE 2
+           END);
+
+SELECT * FROM AD_SALES_DATA_1;
+
+
+
